@@ -6,4 +6,6 @@ import lombok.Setter;
 @Getter @Setter
 public class Product {
 
+	private String productName;
+	private Integer productQuantity;
 }
