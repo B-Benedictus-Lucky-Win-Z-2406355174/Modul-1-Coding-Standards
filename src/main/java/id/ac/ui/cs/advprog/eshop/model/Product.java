@@ -8,4 +8,9 @@ public class Product {
 	private String productId;
 	private String productName;
 	private Integer productQuantity;
+
+	public String setProductId(String productId){
+		this.productId = productId;
+		return productId;
+	}
 }
