@@ -30,4 +30,48 @@ class ProductTest {
     void testGetProductQuantity() {
         assertEquals(100, this.product.getProductQuantity());
     }
+
+    // Negative / edge-case scenarios
+
+    @Test
+    void testProductDefaultValuesAreNull() {
+        Product emptyProduct = new Product();
+        assertNull(emptyProduct.getProductId());
+        assertNull(emptyProduct.getProductName());
+        assertNull(emptyProduct.getProductQuantity());
+    }
+
+    @Test
+    void testSetProductNameToNull() {
+        this.product.setProductName(null);
+        assertNull(this.product.getProductName());
+    }
+
+    @Test
+    void testSetProductNameToEmpty() {
+        this.product.setProductName("");
+        assertEquals("", this.product.getProductName());
+    }
+
+    @Test
+    void testSetProductQuantityToNegative() {
+        this.product.setProductQuantity(-1);
+        assertEquals(-1, this.product.getProductQuantity());
+    }
+
+    @Test
+    void testSetProductIdToNull() {
+        this.product.setProductId(null);
+        assertNull(this.product.getProductId());
+    }
+
+    @Test
+    void testGetProductQuantityNotEqualToWrongValue() {
+        assertNotEquals(999, this.product.getProductQuantity());
+    }
+
+    @Test
+    void testGetProductNameNotEqualToWrongValue() {
+        assertNotEquals("Sampo Cap Budi", this.product.getProductName());
+    }
 }
