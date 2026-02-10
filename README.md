@@ -1,0 +1,5 @@
+Di modul kali ini, saya telah mengimplementasikan fitur sederhana untuk Create Product, melihat List Product,  Edit Product dan Delete Product menggunakan Spring Boot. Struktur kode sudah dipisahkan antara controller, service, dan tampilan (HTML), sehingga alur program lebih mudah dipahami. Penamaan method dan endpoint dibuat cukup jelas agar mudah dibaca dan dimengerti saat pengembangan.
+
+Untuk clean code, saya berusaha menjaga agar setiap method memiliki satu fungsi utama dan tidak terlalu panjang. Dari sisi keamanan, proses delete dan edit dilakukan melalui POST request sehingga lebih aman dibandingkan menggunakan GET.
+
+Namun, masih ada beberapa hal yang bisa diperbaiki, seperti menambahkan validasi input agar data yang dimasukkan pengguna lebih terkontrol. Selain itu, pesan error juga bisa dibuat lebih jelas jika terjadi kesalahan. 
