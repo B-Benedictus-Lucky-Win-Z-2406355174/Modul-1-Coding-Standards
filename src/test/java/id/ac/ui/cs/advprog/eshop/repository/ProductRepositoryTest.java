@@ -96,11 +96,17 @@ class ProductRepositoryTest {
     @Test
     void testEditProductNotFound() {
         Product product = new Product();
-        product.setProductId("non-existent-id");
-        product.setProductName("Ghost Product");
-        product.setProductQuantity(0);
+        product.setProductId("eb558e9f-1c39-460e-8860-71af63bd6");
+        product.setProductName("Sampo Cap Bambang");
+        product.setProductQuantity(100);
+        productRepository.create(product);
 
-        Product result = productRepository.edit(product);
+        Product updatedProduct = new Product();
+        updatedProduct.setProductId("non-existent-id");
+        updatedProduct.setProductName("Ghost Product");
+        updatedProduct.setProductQuantity(0);
+
+        Product result = productRepository.edit(updatedProduct);
         assertNull(result);
     }
 
@@ -156,6 +162,12 @@ class ProductRepositoryTest {
 
     @Test
     void testFindByIdNotFound() {
+        Product product = new Product();
+        product.setProductId("eb558e9f-1c39-460e-8860-71af63bd6");
+        product.setProductName("Sampo Cap Bambang");
+        product.setProductQuantity(100);
+        productRepository.create(product);
+
         Product found = productRepository.findById("non-existent-id");
         assertNull(found);
     }
