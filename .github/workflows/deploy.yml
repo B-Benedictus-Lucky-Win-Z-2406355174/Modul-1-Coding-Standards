@@ -1,0 +1,19 @@
+name: Deploy to Koyeb
+
+on:
+  push:
+    branches:
+      - main
+      - module-2-exercise
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Koyeb CLI
+        uses: koyeb/action-git-deploy@v1
+        with:
+          api-token: ${{ secrets.KOYEB_API_TOKEN }}
+          app-name: eshop
+          service-name: eshop-service
