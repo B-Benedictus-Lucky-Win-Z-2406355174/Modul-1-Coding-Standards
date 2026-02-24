@@ -11,9 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install Koyeb CLI
-        uses: koyeb/action-git-deploy@v1
+      - name: Install and setup Koyeb CLI
+        uses: koyeb/action-setup-koyeb@v1
         with:
           api-token: ${{ secrets.KOYEB_API_TOKEN }}
-          app-name: eshop
-          service-name: eshop-service
+      
+      - name: Trigger Koyeb Redeploy
+        run: koyeb service redeploy eshop/eshop-service
