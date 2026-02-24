@@ -16,4 +16,4 @@ jobs:
           api_token: ${{ secrets.KOYEB_API_TOKEN }}
       
       - name: Trigger Koyeb Redeploy
-        run: koyeb service redeploy eshop/eshop-service
+        run: koyeb service redeploy eshop-service
