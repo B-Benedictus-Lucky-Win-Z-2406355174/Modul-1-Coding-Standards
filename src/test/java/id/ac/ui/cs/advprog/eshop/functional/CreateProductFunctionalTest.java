@@ -33,7 +33,7 @@ class CreateProductFunctionalTest {
     }
 
     @Test
-    void createProduct_isCorrect(ChromeDriver driver) throws Exception {
+    void createProduct_isCorrect(ChromeDriver driver) {
         // Navigate to Create Product page
         driver.get(baseUrl + "/product/create");
 
@@ -57,7 +57,7 @@ class CreateProductFunctionalTest {
     }
 
     @Test
-    void createProduct_appearsInProductList(ChromeDriver driver) throws Exception {
+    void createProduct_appearsInProductList(ChromeDriver driver) {
         // Navigate to Create Product page
         driver.get(baseUrl + "/product/create");
 
@@ -87,7 +87,7 @@ class CreateProductFunctionalTest {
     }
 
     @Test
-    void createProduct_pageTitle_isCorrect(ChromeDriver driver) throws Exception {
+    void createProduct_pageTitle_isCorrect(ChromeDriver driver) {
         driver.get(baseUrl + "/product/create");
         String pageTitle = driver.getTitle();
         assertEquals("Create New Product", pageTitle);
