@@ -47,12 +47,12 @@ public class CarController{
         System.out.println(car.getCarId());
         carService.update(car.getCarId(), car);
 
-        return "redirect::listCar";
+        return "redirect:listCar";
     }
 
     @PostMapping("/deleteCar")
     public String deleteCar(@RequestParam("carId") String carId) {
         carService.deleteCarById(carId);
-        return "redirect::listCar";
+        return "redirect:listCar";
     }
 }
