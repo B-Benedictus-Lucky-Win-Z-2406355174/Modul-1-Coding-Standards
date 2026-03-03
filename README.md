@@ -23,3 +23,38 @@ Jika saya membuat functional test baru untuk mengecek jumlah item pada product l
    Ya, menurut saya implementasi _workflow_ di GitHub Actions saat ini sudah memenuhi definisi **Continuous Integration (CI)** dan **Continuous Deployment (CD)**. 
    Untuk **CI**, setiap kali ada kode yang di-*push* atau di-_Pull Request_ ke *branch* utama, GitHub Actions akan langsung (*continuous*) menjalankan pengujian otomatis (seperti *unit test* dan *functional test*) lalu menjalankan analisis kualitas kode menggunakan SonarCloud dan OSSF Scorecard. Ini memastikan kode baru membaur (terintegrasi) secara aman tanpa merusak fitur lama.
    Untuk **CD**, implementasinya juga telah berhasil karena melalui file `deploy.yml` dan `Dockerfile`, kode yang sudah lolos uji di *branch* utama akan secara otomatis dikompilasi ulang dan di-deploy ke PaaS (Koyeb). Hal ini membebaskan developer dari keharusan merilis versi terbaru dari aplikasi secara manual, sehingga *deployment* dapat terjadi terus-menerus mengikuti perkembangan kode secara otomatis.
+
+## Modul 3
+
+### Reflection
+
+#### 1) Prinsip SOLID yang saya terapkan pada proyek ini:
+
+1. **SRP (Single Responsibility Principle)**
+   Sebelumnya, `CarController` didefinisikan sebagai *inner class* di dalam `ProductController.java`, sehingga satu file menangani dua tanggung jawab sekaligus — mengelola Product dan Car. Saya memisahkan `CarController` ke file tersendiri (`CarController.java`) agar masing-masing *controller* hanya bertanggung jawab atas satu entitas saja.
+
+2. **OCP (Open/Closed Principle)**
+   `CarController` sebelumnya meng-*extend* `ProductController`, sehingga perubahan pada `ProductController` dapat berdampak pada `CarController`. Saya menghapus relasi *inheritance* tersebut agar `CarController` berdiri sendiri sebagai *class* independen. Dengan begitu, masing-masing *controller* dapat dikembangkan (*open for extension*) tanpa perlu memodifikasi *class* lainnya (*closed for modification*).
+
+3. **LSP (Liskov Substitution Principle)**
+   Karena `CarController` meng-*extend* `ProductController`, secara teori objek `CarController` seharusnya bisa menggantikan `ProductController`. Namun, keduanya menangani entitas berbeda (Car vs Product) dengan *endpoint* berbeda, sehingga substitusi tidak mungkin dilakukan tanpa merusak program. Penghapusan *inheritance* yang saya lakukan menyelesaikan pelanggaran LSP ini.
+
+4. **ISP (Interface Segregation Principle)**
+   Pada proyek ini, *interface* `CarService` dan `ProductService` sudah dipisahkan secara spesifik. `CarService` hanya memiliki *method* CRUD untuk Car (`create`, `findAll`, `findById`, `update`, `deleteCarById`), dan `ProductService` hanya memiliki *method* CRUD untuk Product. Tidak ada *client* yang dipaksa bergantung pada *method* yang tidak mereka butuhkan, sehingga prinsip ISP sudah terpenuhi.
+
+5. **DIP (Dependency Inversion Principle)**
+   Sebelumnya, `CarController` bergantung langsung pada *class* konkret `CarServiceImpl`. Saya mengubahnya agar bergantung pada *interface* `CarService` sebagai gantinya. Dengan demikian, *high-level module* (`CarController`) tidak lagi bergantung pada *low-level module* (`CarServiceImpl`), melainkan pada abstraksi (`CarService`).
+
+#### 2) Keuntungan menerapkan prinsip SOLID pada proyek ini:
+
+- **Kode lebih mudah di-*maintain*:** Dengan menerapkan SRP, misalnya memisahkan `CarController` dan `ProductController` ke file masing-masing, jika ada perubahan logika terkait Car, saya hanya perlu mengedit `CarController.java` tanpa khawatir merusak fungsionalitas Product. Hal ini membuat proses *debugging* dan pengembangan menjadi lebih cepat dan terarah.
+- **Kode lebih fleksibel untuk dikembangkan:** Dengan menerapkan DIP, `CarController` bergantung pada *interface* `CarService`, bukan pada `CarServiceImpl`. Jika di masa depan saya ingin mengganti implementasi *service* (misalnya dari *in-memory* ke *database*), saya cukup membuat implementasi baru dari `CarService` tanpa perlu mengubah kode di `CarController` sama sekali.
+- **Mengurangi dampak perubahan (*ripple effect*):** Dengan menerapkan OCP dan menghapus `extends ProductController` dari `CarController`, perubahan pada `ProductController` tidak lagi berdampak pada `CarController`. Kedua *class* bisa berkembang secara independen tanpa saling mengganggu.
+- **Desain lebih bersih dan mudah dipahami:** Dengan ISP, setiap *interface* hanya berisi *method* yang relevan. Developer baru yang membaca kode langsung memahami bahwa `CarService` khusus untuk operasi Car, tanpa harus menelusuri *method* Product yang tidak relevan.
+
+#### 3) Kerugian jika tidak menerapkan prinsip SOLID pada proyek ini:
+
+- **Satu perubahan bisa merusak banyak hal:** Tanpa SRP, ketika `CarController` masih menjadi *inner class* di dalam `ProductController`, mengubah *mapping* atau logika di `ProductController` berpotensi merusak seluruh fungsionalitas Car juga, meskipun perubahan tersebut sama sekali tidak berkaitan dengan Car.
+- **Kode sulit untuk di-*extend*:** Tanpa OCP, karena `CarController` meng-*extend* `ProductController`, menambahkan fitur baru di `ProductController` (seperti validasi khusus Product) bisa secara tidak sengaja mengubah perilaku `CarController`. Hal ini membuat pengembangan fitur baru menjadi berisiko dan memerlukan pengujian ekstra.
+- **Substitusi yang salah menyebabkan *bug* tersembunyi:** Tanpa LSP, relasi `CarController extends ProductController` membuat Spring berpotensi memperlakukan `CarController` sebagai `ProductController`. Ini bisa menyebabkan *endpoint* Product secara tidak sengaja terduplikasi atau tertimpa oleh `CarController`, yang sangat sulit untuk di-*debug*.
+- **Ketergantungan pada implementasi konkret menyulitkan pengujian:** Tanpa DIP, jika `CarController` bergantung pada `CarServiceImpl` secara langsung, proses *unit testing* menjadi lebih sulit karena kita tidak bisa dengan mudah meng-*inject mock object*. Kita terpaksa menguji dengan implementasi sebenarnya, yang membuat test lebih lambat dan rapuh.
