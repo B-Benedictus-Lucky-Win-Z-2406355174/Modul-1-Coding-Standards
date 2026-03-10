@@ -32,6 +32,6 @@ public class PaymentRepository {
     }
 
     public List<Payment> findAll() {
-        return new ArrayList<>();
+        return new ArrayList<>(paymentData);
     }
 }
