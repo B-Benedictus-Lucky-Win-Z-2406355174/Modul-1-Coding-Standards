@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Order</title>
+</head>
+<body>
+<div class="container">
+    <h3>Create Order</h3>
+    <form th:action="@{/order/create}" method="post">
+        <div class="form-group">
+            <label for="authorInput">Author</label>
+            <input type="text" name="author" class="form-control mb-4 col-4" id="authorInput" placeholder="Enter author name">
+        </div>
+        <h5>Products</h5>
+        <div th:each="product : ${products}">
+            <label>
+                <input type="checkbox" name="productIds" th:value="${product.productId}"/>
+                <span th:text="${product.productName}"></span> (Qty: <span th:text="${product.productQuantity}"></span>)
+            </label>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
+</div>
+</body>
+</html>
