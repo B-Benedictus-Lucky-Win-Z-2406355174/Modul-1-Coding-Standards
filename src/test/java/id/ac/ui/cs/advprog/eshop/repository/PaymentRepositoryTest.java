@@ -1,6 +1,8 @@
 package id.ac.ui.cs.advprog.eshop.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,5 +95,20 @@ class PaymentRepositoryTest {
         }
         Payment findResult = paymentRepository.findById("zczc");
         assertNull(findResult);
+    }
+
+    @Test
+    void testFindAll() {
+        for (Payment payment : payments) {
+            paymentRepository.save(payment);
+        }
+        List<Payment> allPayments = paymentRepository.findAll();
+        assertEquals(2, allPayments.size());
+    }
+
+    @Test
+    void testFindAllEmpty() {
+        List<Payment> allPayments = paymentRepository.findAll();
+        assertTrue(allPayments.isEmpty());
     }
 }
