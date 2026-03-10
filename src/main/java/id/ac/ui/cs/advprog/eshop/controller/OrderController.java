@@ -31,29 +31,44 @@ public class OrderController {
 
     @GetMapping("/create")
     public String createOrderPage(Model model) {
-        return "";
+        List<id.ac.ui.cs.advprog.eshop.model.Product> allProducts = productService.findAll();
+        model.addAttribute("products", allProducts);
+        return "CreateOrder";
     }
 
     @PostMapping("/create")
     public String createOrderPost(@RequestParam String author,
                                   @RequestParam List<String> productIds,
                                   Model model) {
-        return "";
+        List<id.ac.ui.cs.advprog.eshop.model.Product> products = new java.util.ArrayList<>();
+        for (String productId : productIds) {
+            id.ac.ui.cs.advprog.eshop.model.Product product = productService.findById(productId);
+            products.add(product);
+        }
+
+        id.ac.ui.cs.advprog.eshop.model.Order order = new id.ac.ui.cs.advprog.eshop.model.Order(
+                null, products, System.currentTimeMillis(), author);
+        orderService.createOrder(order);
+        return "redirect:/order/history";
     }
 
     @GetMapping("/history")
     public String orderHistoryPage() {
-        return "";
+        return "OrderHistory";
     }
 
     @PostMapping("/history")
     public String orderHistoryPost(@RequestParam String author, Model model) {
-        return "";
+        List<id.ac.ui.cs.advprog.eshop.model.Order> orders = orderService.findAllByAuthor(author);
+        model.addAttribute("orders", orders);
+        return "OrderHistoryResult";
     }
 
     @GetMapping("/pay/{orderId}")
     public String payOrderPage(@PathVariable String orderId, Model model) {
-        return "";
+        id.ac.ui.cs.advprog.eshop.model.Order order = orderService.findById(orderId);
+        model.addAttribute("order", order);
+        return "PayOrder";
     }
 
     @PostMapping("/pay/{orderId}")
@@ -61,6 +76,9 @@ public class OrderController {
                                @RequestParam String method,
                                @RequestParam Map<String, String> paymentData,
                                Model model) {
-        return "";
+        id.ac.ui.cs.advprog.eshop.model.Order order = orderService.findById(orderId);
+        id.ac.ui.cs.advprog.eshop.model.Payment payment = paymentService.addPayment(order, method, paymentData);
+        model.addAttribute("payment", payment);
+        return "PaymentResult";
     }
 }
