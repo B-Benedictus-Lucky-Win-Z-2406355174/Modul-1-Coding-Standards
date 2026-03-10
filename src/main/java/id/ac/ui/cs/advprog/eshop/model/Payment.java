@@ -38,42 +38,34 @@ public class Payment {
         }
     }
 
+    private static final String REJECTED = PaymentStatus.REJECTED.getValue();
+    private static final String SUCCESS = PaymentStatus.SUCCESS.getValue();
+
     private String determineStatus(String method, Map<String, String> paymentData) {
         if (PaymentMethod.VOUCHER_CODE.getValue().equals(method)) {
             return validateVoucherCode(paymentData);
         } else if (PaymentMethod.BANK_TRANSFER.getValue().equals(method)) {
             return validateBankTransfer(paymentData);
         }
-        return PaymentStatus.REJECTED.getValue();
+        return REJECTED;
     }
 
     private String validateVoucherCode(Map<String, String> data) {
         String code = data.get("voucherCode");
-        if (code == null) {
-            return PaymentStatus.REJECTED.getValue();
-        }
-        if (code.length() != 16) {
-            return PaymentStatus.REJECTED.getValue();
-        }
-        if (!code.startsWith("ESHOP")) {
-            return PaymentStatus.REJECTED.getValue();
+        if (code == null || code.length() != 16 || !code.startsWith("ESHOP")) {
+            return REJECTED;
         }
         long digitCount = code.chars().filter(Character::isDigit).count();
-        if (digitCount != 8) {
-            return PaymentStatus.REJECTED.getValue();
-        }
-        return PaymentStatus.SUCCESS.getValue();
+        return digitCount == 8 ? SUCCESS : REJECTED;
     }
 
     private String validateBankTransfer(Map<String, String> data) {
         String bankName = data.get("bankName");
         String referenceCode = data.get("referenceCode");
-        if (bankName == null || bankName.isEmpty()) {
-            return PaymentStatus.REJECTED.getValue();
+        if (bankName == null || bankName.isEmpty()
+                || referenceCode == null || referenceCode.isEmpty()) {
+            return REJECTED;
         }
-        if (referenceCode == null || referenceCode.isEmpty()) {
-            return PaymentStatus.REJECTED.getValue();
-        }
-        return PaymentStatus.SUCCESS.getValue();
+        return SUCCESS;
     }
 }
