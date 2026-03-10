@@ -18,11 +18,13 @@ public class PaymentController {
 
     @GetMapping("/admin/list")
     public String adminPaymentList(Model model) {
-        return "";
+        model.addAttribute("payments", paymentService.getAllPayments());
+        return "PaymentAdminList";
     }
 
     @GetMapping("/admin/detail/{paymentId}")
     public String adminPaymentDetail(@PathVariable String paymentId, Model model) {
-        return "";
+        model.addAttribute("payment", paymentService.getPayment(paymentId));
+        return "PaymentAdminDetail";
     }
 }
