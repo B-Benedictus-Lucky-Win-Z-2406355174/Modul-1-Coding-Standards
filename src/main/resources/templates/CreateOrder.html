@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Create Order</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
 <body>
-<div class="container">
+
+<div class="container my-2">
     <h3>Create Order</h3>
     <form th:action="@{/order/create}" method="post">
         <div class="form-group">
@@ -13,14 +15,17 @@
             <input type="text" name="author" class="form-control mb-4 col-4" id="authorInput" placeholder="Enter author name">
         </div>
         <h5>Products</h5>
-        <div th:each="product : ${products}">
-            <label>
-                <input type="checkbox" name="productIds" th:value="${product.productId}"/>
+        <p th:if="${#lists.isEmpty(products)}">No products available. Please <a th:href="@{/product/create}">create a product</a> first.</p>
+        <div th:each="product : ${products}" class="form-check mb-2">
+            <input type="checkbox" name="productIds" th:value="${product.productId}" class="form-check-input" th:id="${'product-' + product.productId}"/>
+            <label class="form-check-label" th:for="${'product-' + product.productId}">
                 <span th:text="${product.productName}"></span> (Qty: <span th:text="${product.productQuantity}"></span>)
             </label>
         </div>
         <button type="submit" class="btn btn-primary mt-3">Submit</button>
     </form>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>
 </html>

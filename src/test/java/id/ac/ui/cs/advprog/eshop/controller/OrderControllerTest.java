@@ -84,6 +84,12 @@ class OrderControllerTest {
     }
 
     @Test
+    void testCreateOrderPostEmptyProducts() {
+        String viewName = orderController.createOrderPost("Safira Sudrajat", null, model);
+        assertEquals("redirect:/order/create", viewName);
+    }
+
+    @Test
     void testOrderHistoryPage() {
         String viewName = orderController.orderHistoryPage();
         assertEquals("OrderHistory", viewName);

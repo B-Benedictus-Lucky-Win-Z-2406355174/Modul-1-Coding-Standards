@@ -1,7 +1,9 @@
 package id.ac.ui.cs.advprog.eshop.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import id.ac.ui.cs.advprog.eshop.model.Order;
+import id.ac.ui.cs.advprog.eshop.model.Payment;
+import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.service.OrderService;
 import id.ac.ui.cs.advprog.eshop.service.PaymentService;
 import id.ac.ui.cs.advprog.eshop.service.ProductService;
@@ -31,23 +36,26 @@ public class OrderController {
 
     @GetMapping("/create")
     public String createOrderPage(Model model) {
-        List<id.ac.ui.cs.advprog.eshop.model.Product> allProducts = productService.findAll();
+        List<Product> allProducts = productService.findAll();
         model.addAttribute("products", allProducts);
         return "CreateOrder";
     }
 
     @PostMapping("/create")
     public String createOrderPost(@RequestParam String author,
-                                  @RequestParam List<String> productIds,
+                                  @RequestParam(required = false) List<String> productIds,
                                   Model model) {
-        List<id.ac.ui.cs.advprog.eshop.model.Product> products = new java.util.ArrayList<>();
+        if (productIds == null || productIds.isEmpty()) {
+            return "redirect:/order/create";
+        }
+
+        List<Product> products = new ArrayList<>();
         for (String productId : productIds) {
-            id.ac.ui.cs.advprog.eshop.model.Product product = productService.findById(productId);
+            Product product = productService.findById(productId);
             products.add(product);
         }
 
-        id.ac.ui.cs.advprog.eshop.model.Order order = new id.ac.ui.cs.advprog.eshop.model.Order(
-                null, products, System.currentTimeMillis(), author);
+        Order order = new Order(UUID.randomUUID().toString(), products, System.currentTimeMillis(), author);
         orderService.createOrder(order);
         return "redirect:/order/history";
     }
@@ -59,14 +67,14 @@ public class OrderController {
 
     @PostMapping("/history")
     public String orderHistoryPost(@RequestParam String author, Model model) {
-        List<id.ac.ui.cs.advprog.eshop.model.Order> orders = orderService.findAllByAuthor(author);
+        List<Order> orders = orderService.findAllByAuthor(author);
         model.addAttribute("orders", orders);
         return "OrderHistoryResult";
     }
 
     @GetMapping("/pay/{orderId}")
     public String payOrderPage(@PathVariable String orderId, Model model) {
-        id.ac.ui.cs.advprog.eshop.model.Order order = orderService.findById(orderId);
+        Order order = orderService.findById(orderId);
         model.addAttribute("order", order);
         return "PayOrder";
     }
@@ -76,8 +84,8 @@ public class OrderController {
                                @RequestParam String method,
                                @RequestParam Map<String, String> paymentData,
                                Model model) {
-        id.ac.ui.cs.advprog.eshop.model.Order order = orderService.findById(orderId);
-        id.ac.ui.cs.advprog.eshop.model.Payment payment = paymentService.addPayment(order, method, paymentData);
+        Order order = orderService.findById(orderId);
+        Payment payment = paymentService.addPayment(order, method, paymentData);
         model.addAttribute("payment", payment);
         return "PaymentResult";
     }

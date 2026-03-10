@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.Model;
 
 import id.ac.ui.cs.advprog.eshop.enums.PaymentMethod;
+import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
 import id.ac.ui.cs.advprog.eshop.model.Order;
 import id.ac.ui.cs.advprog.eshop.model.Payment;
 import id.ac.ui.cs.advprog.eshop.model.Product;
@@ -57,6 +58,21 @@ class PaymentControllerTest {
     }
 
     @Test
+    void testPaymentDetailForm() {
+        String viewName = paymentController.paymentDetailForm();
+        assertEquals("PaymentDetail", viewName);
+    }
+
+    @Test
+    void testPaymentDetail() {
+        when(paymentService.getPayment("pay-001")).thenReturn(payment);
+
+        String viewName = paymentController.paymentDetail("pay-001", model);
+        assertEquals("PaymentDetailResult", viewName);
+        verify(model, times(1)).addAttribute("payment", payment);
+    }
+
+    @Test
     void testAdminPaymentListPage() {
         List<Payment> payments = new ArrayList<>();
         payments.add(payment);
@@ -74,5 +90,16 @@ class PaymentControllerTest {
         String viewName = paymentController.adminPaymentDetail("pay-001", model);
         assertEquals("PaymentAdminDetail", viewName);
         verify(model, times(1)).addAttribute("payment", payment);
+    }
+
+    @Test
+    void testAdminSetStatus() {
+        when(paymentService.getPayment("pay-001")).thenReturn(payment);
+
+        String viewName = paymentController.adminSetStatus("pay-001",
+                PaymentStatus.SUCCESS.getValue(), model);
+        assertEquals("redirect:/payment/admin/list", viewName);
+        verify(paymentService, times(1)).setStatus(payment,
+                PaymentStatus.SUCCESS.getValue());
     }
 }
