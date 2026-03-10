@@ -1,6 +1,8 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -95,5 +97,36 @@ class PaymentServiceImplTest {
         Payment result = paymentService.setStatus(payment, PaymentStatus.REJECTED.getValue());
         assertEquals(PaymentStatus.REJECTED.getValue(), result.getStatus());
         assertEquals(OrderStatus.FAILED.getValue(), order.getStatus());
+    }
+
+    @Test
+    void testGetPayment() {
+        Payment payment = payments.get(0);
+        doReturn(payment).when(paymentRepository).findById(payment.getId());
+
+        Payment result = paymentService.getPayment(payment.getId());
+        assertEquals(payment.getId(), result.getId());
+    }
+
+    @Test
+    void testGetPaymentNotFound() {
+        doReturn(null).when(paymentRepository).findById("zczc");
+        assertNull(paymentService.getPayment("zczc"));
+    }
+
+    @Test
+    void testGetAllPayments() {
+        doReturn(payments).when(paymentRepository).findAll();
+
+        List<Payment> result = paymentService.getAllPayments();
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void testGetAllPaymentsEmpty() {
+        doReturn(new ArrayList<Payment>()).when(paymentRepository).findAll();
+
+        List<Payment> result = paymentService.getAllPayments();
+        assertTrue(result.isEmpty());
     }
 }
